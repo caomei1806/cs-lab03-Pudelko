@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PudelkoLibrary
 {
-    class Pudelko
+    class Pudelko : IFormattable
     {
         private double _A;
         private double _B;
@@ -48,6 +48,31 @@ namespace PudelkoLibrary
             _A = ParseToMilimeter(a, unit);
             _B = ParseToMilimeter(b, unit);
             _C = ParseToMilimeter(c, unit);
+
+        }
+
+        public override string ToString()
+        {
+            return ToString("m");
+        }
+
+        public string ToString(string format)
+        {
+            return ToString(format, null);
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            switch (format) {
+                case "mm":
+                    return $"{_A} m × {_B} m × {_C} m ×";
+                case "cm":
+                    return $"{_A / 10} m × {_B / 10} m × {_C /10} m ×";
+                case "m":
+                    return $"{_A / 1000} m × {_B / 1000} m × {_C / 1000} m ×";
+                default:
+                    throw new FormatException();
+            }
 
         }
     }
