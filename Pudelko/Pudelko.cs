@@ -16,17 +16,22 @@ namespace PudelkoLibrary
         public double B { get => _B / 1000; }
         public double C { get => _C / 1000; }
 
-
-        public double Objetosc
-        {
-            get => Math.Round((_A / 1000) * (_B / 1000) * (_B / 1000));
-        }
         public Pudelko()
         {
             _A = 100;
             _B = 100;
             _C = 100;
             this.unit = UnitOfMeasure.meter;
+        }
+
+        public double Objetosc
+        {
+            get => Math.Round((_A / 1000) * (_B / 1000) * (_C / 1000));
+        }
+
+        public double Pole
+        {
+            get => Math.Round(2 * ((_A / 1000) * (_B / 1000)) + 2 * ((_A / 1000) * (_C / 1000)) + 2 * ((_C / 1000) * (_B / 1000)), 6);
         }
 
         private double ParseToMilimeter(double value, UnitOfMeasure unit)
