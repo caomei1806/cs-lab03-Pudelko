@@ -9,19 +9,23 @@ namespace PudelkoLibrary
         private double _A;
         private double _B;
         private double _C;
+        private UnitOfMeasure unit;
+
 
         public double A { get => _A / 1000; }
         public double B { get => _B / 1000; }
         public double C { get => _C / 1000; }
 
 
-
-        private UnitOfMeasure unit;
+        public double Objetosc
+        {
+            get => Math.Round((_A / 1000) * (_B / 1000) * (_B / 1000));
+        }
         public Pudelko()
         {
-            A = 100;
-            B = 100;
-            C = 100;
+            _A = 100;
+            _B = 100;
+            _C = 100;
             this.unit = UnitOfMeasure.meter;
         }
 
@@ -75,5 +79,8 @@ namespace PudelkoLibrary
             }
 
         }
+
+        
+
     }
 }
