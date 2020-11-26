@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -164,14 +165,66 @@ namespace PudelkoLibrary
             var r = new double[] { obj.A, obj.B, obj.C };
             return r;
         }
-        public static explicit operator Pudelko(ValueTuple<int, int, int> wymiary)
+        public static implicit operator Pudelko(ValueTuple<int, int, int> wymiary)
         {
             return new Pudelko((double)wymiary.Item1, (double)wymiary.Item2, (double)wymiary.Item3, UnitOfMeasure.milimeter);
         }
 
+        public double this[int index] {
+            get
+            {
+                switch (index) {
+                    case 0:
+                        return _A;
+                    case 1:
+                        return _B;
+                    case 2:
+                        return _C;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+        int position = 0;
+
+        public bool MoveNext()
+        {
+            position++;
+            return (position < 3);
+        }
+
+        public void Reset()
+        {
+            position = 0;
+        }
+
+        public Object Current
+        {
+            get
+            {
+                switch (position)
+                {
+                    case 0:
+                        return _A;
+                    case 1:
+                        return _B;
+                    case 2:
+                        return _C;
+                    default:
+                        return 0;
+
+                }
+            }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return (IEnumerator)this;
+        }
+
     }
-    interface IEquatable<Pudelko>
-    {
-        bool Equals();
-    }
+
+
+    public interface IEquatable<Pudelko> { }
+    public interface IEnumerable<Pudelko> : System.Collections.IEnumerable { };
 }
