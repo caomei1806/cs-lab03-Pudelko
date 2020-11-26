@@ -85,7 +85,93 @@ namespace PudelkoLibrary
 
         }
 
-        
+        public bool Equals(Pudelko obj)
+        {
+            if (_A == obj._A)
+            {
+                if (_B == obj._B)
+                {
+                    if (_C == obj._C)
+                    {
+                        return true;
+                    }
+                }
+                if (_B == obj._C)
+                {
+                    if (_C == obj._B)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (_B == obj._A)
+            {
+                if (_A == obj._B)
+                {
+                    if (_C == obj._C)
+                    {
+                        return true;
+                    }
+                }
+                if (_A == obj._C)
+                {
+                    if (_C == obj._B)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (_C == obj._A)
+            {
+                if (_A == obj._B)
+                {
+                    if (_C == obj._C)
+                    {
+                        return true;
+                    }
+                }
+                if (_B == obj._C)
+                {
+                    if (_C == obj._B)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
+        public static bool operator ==(Pudelko obj, Pudelko obj2)
+        {
+            return obj.Equals(obj2);
+        }
+
+        public static bool operator !=(Pudelko obj, Pudelko obj2)
+        {
+            return obj.Equals(obj2);
+        }
+        public static Pudelko operator +(Pudelko obj, Pudelko obj2)
+        {
+            double a = obj._A + obj2._A;
+            double b = obj._B + obj2._B;
+            double c = obj._C > obj2._C ? obj._C : obj2._C;
+            return new Pudelko(a, b, c, UnitOfMeasure.milimeter);
+
+        }
+
+        public static explicit operator double[](Pudelko obj)
+        {
+            var r = new double[] { obj.A, obj.B, obj.C };
+            return r;
+        }
+        public static explicit operator Pudelko(ValueTuple<int, int, int> wymiary)
+        {
+            return new Pudelko((double)wymiary.Item1, (double)wymiary.Item2, (double)wymiary.Item3, UnitOfMeasure.milimeter);
+        }
+
+    }
+    interface IEquatable<Pudelko>
+    {
+        bool Equals();
     }
 }
