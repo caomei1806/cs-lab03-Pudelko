@@ -7,10 +7,10 @@ namespace PudelkoLibrary
 {
     class Pudelko : IFormattable
     {
-        private double _A;
-        private double _B;
-        private double _C;
-        private UnitOfMeasure unit;
+        private readonly double _A;
+        private readonly double _B;
+        private readonly double _C;
+        private readonly UnitOfMeasure unit;
 
 
         public double A { get => _A / 1000; }
@@ -27,7 +27,7 @@ namespace PudelkoLibrary
 
         public double Objetosc
         {
-            get => Math.Round((_A / 1000) * (_B / 1000) * (_C / 1000));
+            get => Math.Round((_A / 1000) * (_B / 1000) * (_C / 1000), 9);
         }
 
         public double Pole
@@ -40,20 +40,44 @@ namespace PudelkoLibrary
             switch (unit)
             {
                 case UnitOfMeasure.milimeter:
-                    return value;
+                    return Math.Truncate(value);
                 case UnitOfMeasure.centimeter:
-                    return value * 10;
+                    return value < 0.1 ? 0 : Math.Round(value * 10, 1);
                 case UnitOfMeasure.meter:
-                    return value + 1000;
+                    return value < 0.001 ? 0 : Math.Round(value * 1000, 3);
                 default: 
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public Pudelko(double a = 0.1, double b = 0.1, double c = 0.1, UnitOfMeasure unit = UnitOfMeasure.meter)
+        public Pudelko(double a, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
-            if (a <= 0 || b <= 0 || c <= 0) 
+            if (this.ParseToMilimeter(a, unit) <= 0) 
                 throw new ArgumentOutOfRangeException();
-            if(ParseToMilimeter(a, unit) > 10000 || ParseToMilimeter(b, unit) > 10000 || ParseToMilimeter(c, unit) > 10000)
+            if(ParseToMilimeter(a, unit) >= 10000)
+                throw new ArgumentOutOfRangeException();
+            _A = ParseToMilimeter(a, unit);
+            _B = ParseToMilimeter(0.1, UnitOfMeasure.meter);
+            _C = ParseToMilimeter(0.1, UnitOfMeasure.meter);
+
+        }
+
+        public Pudelko(double a, double b, UnitOfMeasure unit = UnitOfMeasure.meter)
+        {
+            if (this.ParseToMilimeter(a, unit) <= 0 || this.ParseToMilimeter(b, unit) <= 0)
+                throw new ArgumentOutOfRangeException();
+            if (ParseToMilimeter(a, unit) > 10000 || ParseToMilimeter(b, unit) > 10000)
+                throw new ArgumentOutOfRangeException();
+            _A = ParseToMilimeter(a, unit);
+            _B = ParseToMilimeter(b, unit);
+            _C = ParseToMilimeter(0.1, UnitOfMeasure.meter);
+
+        }
+
+        public Pudelko(double a, double b, double c, UnitOfMeasure unit = UnitOfMeasure.meter)
+        {
+            if (this.ParseToMilimeter(a, unit) <= 0 || this.ParseToMilimeter(b, unit) <= 0 || this.ParseToMilimeter(c, unit) <= 0)
+                throw new ArgumentOutOfRangeException();
+            if (ParseToMilimeter(a, unit) > 10000 || ParseToMilimeter(b, unit) > 10000 || ParseToMilimeter(c, unit) > 10000)
                 throw new ArgumentOutOfRangeException();
             _A = ParseToMilimeter(a, unit);
             _B = ParseToMilimeter(b, unit);
@@ -162,7 +186,7 @@ namespace PudelkoLibrary
 
         public static explicit operator double[](Pudelko obj)
         {
-            var r = new double[] { obj.A, obj.B, obj.C };
+            var r = new double[3] { obj.A, obj.B, obj.C };
             return r;
         }
         public static implicit operator Pudelko(ValueTuple<int, int, int> wymiary)
@@ -222,6 +246,33 @@ namespace PudelkoLibrary
             return (IEnumerator)this;
         }
 
+        public Pudelko Parse(string toParse)
+        {
+            var splitedToParse = toParse.Split(" ");
+            if(splitedToParse.Length == 8)
+            {
+                var a = double.Parse(splitedToParse[0]);
+                var b = double.Parse(splitedToParse[3]);
+                var c = double.Parse(splitedToParse[6]);
+                var unitChar = splitedToParse[1];
+                switch (unitChar)
+                {
+                    case "mm":
+                        return new Pudelko(a, b, c, UnitOfMeasure.milimeter);
+                    case "cm":
+                        return new Pudelko(a, b, c, UnitOfMeasure.centimeter);
+                    case "m":
+                        return new Pudelko(a, b, c, UnitOfMeasure.meter);
+                    default:
+                        throw new FormatException();
+                }
+
+            }
+            else
+            {
+                throw new FormatException();
+            }
+        }
     }
 
 
